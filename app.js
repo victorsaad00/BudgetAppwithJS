@@ -62,6 +62,8 @@ var UIcontroller = (function() {
     inputDescription:'.add__description',
     inputValue: '.add__value',
     inputBtn: '.add__btn',
+    incomeContainer:'.income__list',
+    expensesContainer:'.expenses__list'
   }
 
   return {
@@ -72,6 +74,29 @@ var UIcontroller = (function() {
             value: document.querySelector(DOMstrings.inputValue).value
           };
       }, 
+
+      addListItem: function(object, type){
+        var html, newHTML, element;
+
+        // create Html string with placeHolder text
+        if(type === 'inc'){
+          element = DOMstrings.incomeContainer;
+          html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix">  <div class="item__value">%value%</div><div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"> </i></button></div> </div> </div>';
+
+        }else if (type === 'exp'){
+          element = DOMstrings.expensesContainer;
+          html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div> </div>';
+        }
+        // Replace the placeholder with some actual data
+
+        newHTML = html.replace('%id%', object.id);
+        newHTML = newHTML.replace('%description%', object.description);
+        newHTML = newHTML.replace('%value%', object.value);
+
+
+        // Insert HTML into the DOM
+        document.querySelector(element).insertAdjacentHTML('beforeend', newHTML);
+      },
 
       getDOMstrings: function(){
         return DOMstrings;
@@ -87,6 +112,7 @@ var controller = (function(budgetCtrl, UICtrl) {
     
     document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
+    // Dectect keycode ( keyboard events ) or mouse clicks
     document.addEventListener('keypress', function (event) {
       if (event.keyCode === 13 || event.which === 13){
           //console.log('ENTER WAS PRESSED.');
@@ -107,6 +133,9 @@ var controller = (function(budgetCtrl, UICtrl) {
     newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
     //3. Add the item to the ui
+    UIcontroller.addListItem(newItem, input.type);
+
+
     //4. Calculate de budget
     //5. Display the budget on the UI
       
@@ -114,7 +143,7 @@ var controller = (function(budgetCtrl, UICtrl) {
 
   return {
     init: function(){
-      console.log('Application has started.')
+      console.log('Application has started.');
       setupEventListeners();
     }
   }
